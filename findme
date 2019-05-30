@@ -1,0 +1,72 @@
+import pandas as pd
+import win32com.client
+import datetime
+
+#creating the variable which will hold the Excel application in the background
+
+#xlapp = win32com.client.DispatchEx("Excel.Application")
+
+#path of the excel document to be open at the background
+
+#wb = xlapp.Workbooks.Open('Path')
+
+# Refreshing all the tabs in the excel sheet
+#wb.RefreshAll()
+
+# Saving the updated excel sheet
+#wb.Save()
+
+#closing the instance of  the xlapp
+#xlapp.quit()
+
+#Print the statement once the script is completed to check the progress.
+
+#print("Completed")
+
+
+#Pre-processing the data sheet.
+
+share_export = pd.read_excel("Path",sheet_name='Closed')
+#print(share_export.dtypes)
+
+
+#Creating the dictionary to map the days of the week.
+
+minus_days = {
+    'Sunday': 20,
+    'Monday': 7,
+    'Tuesday': 8,
+    'Wednesday': 9,
+    'Thursday': 10,
+    'Friday': 11,
+    'Saturday':12
+
+}
+#today=datetime.date.today()
+#print(today)
+
+#last_monday=today - datetime.timedelta(days=today.weekday())
+#print(last_monday)
+#share_export['Month'] = share_export['Modified'].dt.month
+#share_export['Day_of_Month'] = share_export['Modified'].dt.week
+#share_export['Day_of_Week_Name'] = share_export['Modified'].dt.day_name()
+#share_export['Week_name'] = share_export['Modified'].dt.weekday
+#print(share_export[['Day_of_Month','Month','Day_of_Week_Name','Week_name']])
+#share_export['Today_Date'] = pd.to_datetime('today')
+#share_export['Today_Date']=share_export['Today_Date'].dt.dayofweek
+#print(share_export['Today_Date'])
+#share_export['Target_day'] = 6
+#print(share_export[['Today_Date','Target_day']])
+
+
+share_export['Date'] = share_export['Modified'].dt.date
+share_export['Day_of_Week_Name'] = share_export['Modified'].dt.day_name()
+#print(share_export[['Date', 'Day_of_Week_Name']])
+share_export['Minus_Days'] = share_export['Day_of_Week_Name'].map(minus_days)
+#print(share_export[['Date', 'Day_of_Week_Name','Minus_Days']])
+share_export['Monday_Date'] = (share_export['Modified'] - share_export.Minus_Days.apply(lambda x: pd.to_timedelta(x, unit='D'))).dt.date
+print(share_export[['Date','Monday_Date']])
+
+#print(share_export.dtypes)
+#share_export['last_monday'] = share_export['Modified']-datetime.timedelta(days = today.weekday())
+#print(share_export[['Modified','last_monday']])
